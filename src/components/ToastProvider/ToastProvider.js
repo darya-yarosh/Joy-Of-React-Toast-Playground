@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import useKey from '../../hooks/useEscapeKey';
+
 export const CurrentToastContext = React.createContext();
 export const ToastListContext = React.createContext();
 
@@ -45,6 +47,8 @@ function ToastProvider({ children }) {
     closeToast: (toastId) => closeToast(toastId),
     closeToastList: () => closeToastList()
   }
+
+  useKey("Escape", () => closeToastList());
 
   return (
     <CurrentToastContext.Provider value={currentToastProviderValue}>
