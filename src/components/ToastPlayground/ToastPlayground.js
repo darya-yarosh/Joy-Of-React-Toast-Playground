@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import Button from '../Button';
-import Toast from '../Toast/Toast';
+import ToastShelf from '../ToastShelf/ToastShelf';
 
 import styles from './ToastPlayground.module.css';
 
@@ -10,7 +10,26 @@ const VARIANT_OPTIONS = ['notice', 'warning', 'success', 'error'];
 function ToastPlayground() {
   const [message, setMessage] = useState("");
   const [currentVariant, setCurrentVariant] = useState(VARIANT_OPTIONS[0]);
-  const [isShowingToast, setIsShowingToast] = useState(false);
+  const [toastList, setToastList] = useState([]);
+
+  const messageRef = useRef(null);
+
+  function sendToast(message, variant) {
+    const newToast = {
+      id: crypto.randomUUID(),
+      message: message,
+      variant: variant,
+    }
+
+    setToastList([...toastList, newToast]);
+    setCurrentVariant(VARIANT_OPTIONS[0]);
+    setMessage("");
+    messageRef.current.focus();
+  }
+
+  useEffect(()=>{
+    messageRef.current.focus();
+  }, [])
 
   return (
     <div className={styles.wrapper}>
@@ -19,14 +38,23 @@ function ToastPlayground() {
         <h1>Toast Playground</h1>
       </header>
 
-      {isShowingToast &&
-        <Toast
-          message={message}
-          type={currentVariant}
-          onClose={() => setIsShowingToast(false)}
-        />}
+      <ToastShelf
+        toastList={toastList}
+        updateToastList={
+          (newToastList) =>
+            setToastList(newToastList)
+        }
+      />
 
-      <div className={styles.controlsWrapper}>
+      <form
+        className={styles.controlsWrapper}
+        onSubmit={
+          (event) =>{
+            event.preventDefault();
+            sendToast(message, currentVariant);
+          }
+        }
+      >
         <div className={styles.row}>
           <label
             htmlFor="message"
@@ -38,6 +66,7 @@ function ToastPlayground() {
           <div className={styles.inputWrapper}>
             <textarea
               id="message"
+              ref={messageRef}
               className={styles.messageInput}
               value={message}
               onChange={(event) => setMessage(event.target.value)}
@@ -76,15 +105,12 @@ function ToastPlayground() {
           <div
             className={`${styles.inputWrapper} ${styles.radioWrapper}`}
           >
-            <Button onClick={
-              () =>
-                setIsShowingToast(true)
-            }>
+            <Button>
               Pop Toast!
             </Button>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

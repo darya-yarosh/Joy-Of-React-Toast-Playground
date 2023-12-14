@@ -19,19 +19,19 @@ const ICONS_BY_VARIANT = {
 };
 
 function Toast({
-  message,
-  type,
+  variant,
   onClose,
+  children
 }) {
-  const IconElement = ICONS_BY_VARIANT[type];
+  const IconElement = ICONS_BY_VARIANT[variant];
 
   return (
-    <div className={`${styles.toast} ${styles[type]}`}>
+    <div className={`${styles.toast} ${styles[variant]}`}>
       <div className={styles.iconContainer}>
         <IconElement size={24} />
       </div>
       <p className={styles.content}>
-        {message}
+        {children}
       </p>
       <button
         className={styles.closeButton}
