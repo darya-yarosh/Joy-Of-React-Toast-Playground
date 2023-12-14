@@ -28,6 +28,10 @@ function ToastProvider({ children }) {
     setToastList(filteredToastShelf);
   }
 
+  function closeToastList() {
+    setToastList([]);
+  }
+
   const currentToastProviderValue = {
     message: currentMessage,
     setMessage: setCurrentMessage,
@@ -38,7 +42,8 @@ function ToastProvider({ children }) {
 
   const toastListProviderValue = {
     toastList: toastList,
-    closeToast: (toastId) => closeToast(toastId)
+    closeToast: (toastId) => closeToast(toastId),
+    closeToastList: () => closeToastList()
   }
 
   return (

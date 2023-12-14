@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import Toast from '../Toast';
 
@@ -8,6 +8,26 @@ import { ToastListContext } from '../ToastProvider/ToastProvider';
 
 function ToastShelf() {
   const toastListContext = useContext(ToastListContext);
+
+  useEffect(() => {
+    document.addEventListener("keydown", (event) => {
+      if (
+        event.code === "Escape"
+        && toastListContext.toastList.length === 0
+      ) {
+        toastListContext.closeToastList();
+      }
+    });
+
+    return (() => {
+      document.removeEventListener("keydown", (event) => {
+        if (event.code === "Escape") {
+          toastListContext.closeToastList();
+        }
+      })
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <ol className={styles.wrapper}>
