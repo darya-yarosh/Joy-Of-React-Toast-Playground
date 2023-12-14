@@ -4,6 +4,8 @@
   "private": true,
   "author": "Josh Comeau <me@joshwcomeau.com>",
   "dependencies": {
+    "@parcel/core": "^2.10.3",
+    "@parcel/resolver-default": "^2.10.3",
     "eslint": "^8.49.0",
     "eslint-config-react-app": "^7.0.1",
     "new-component": "5.0.2",
