@@ -1,35 +1,41 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 
 import Button from '../Button';
 import ToastShelf from '../ToastShelf/ToastShelf';
 
 import styles from './ToastPlayground.module.css';
 
-const VARIANT_OPTIONS = ['notice', 'warning', 'success', 'error'];
+import { CurrentToastContext, VARIANT_OPTIONS } from '../ToastProvider/ToastProvider';
 
 function ToastPlayground() {
-  const [message, setMessage] = useState("");
-  const [currentVariant, setCurrentVariant] = useState(VARIANT_OPTIONS[0]);
-  const [toastList, setToastList] = useState([]);
+  const currentToastContext = useContext(CurrentToastContext);
 
   const messageRef = useRef(null);
 
-  function sendToast(message, variant) {
-    const newToast = {
-      id: crypto.randomUUID(),
-      message: message,
-      variant: variant,
-    }
+  function sendToast(event) {
+    event.preventDefault();
+    currentToastContext.createToast();
 
-    setToastList([...toastList, newToast]);
-    setCurrentVariant(VARIANT_OPTIONS[0]);
-    setMessage("");
     messageRef.current.focus();
   }
 
-  useEffect(()=>{
-    messageRef.current.focus();
+  function onChangeMessage(newMessage) {
+    currentToastContext.setMessage(newMessage);
+  }
+
+  function onChangeVariant(newVariant) {
+    currentToastContext.setVariant(newVariant);
+  }
+
+  useEffect(() => {
+    if (messageRef.current !== null) {
+      messageRef.current.focus();
+    }
   }, [])
+
+  if (currentToastContext === undefined) {
+    return <div>Loading...</div>
+  }
 
   return (
     <div className={styles.wrapper}>
@@ -38,22 +44,11 @@ function ToastPlayground() {
         <h1>Toast Playground</h1>
       </header>
 
-      <ToastShelf
-        toastList={toastList}
-        updateToastList={
-          (newToastList) =>
-            setToastList(newToastList)
-        }
-      />
+      <ToastShelf />
 
       <form
         className={styles.controlsWrapper}
-        onSubmit={
-          (event) =>{
-            event.preventDefault();
-            sendToast(message, currentVariant);
-          }
-        }
+        onSubmit={sendToast}
       >
         <div className={styles.row}>
           <label
@@ -68,8 +63,8 @@ function ToastPlayground() {
               id="message"
               ref={messageRef}
               className={styles.messageInput}
-              value={message}
-              onChange={(event) => setMessage(event.target.value)}
+              value={currentToastContext.message}
+              onChange={(event) => onChangeMessage(event.target.value)}
             />
           </div>
         </div>
@@ -89,10 +84,10 @@ function ToastPlayground() {
                   type="radio"
                   name="variant"
                   value={variant_option}
-                  checked={variant_option === currentVariant}
+                  checked={variant_option === currentToastContext.variant}
                   onChange={
                     (event) =>
-                      setCurrentVariant(event.target.value)
+                      onChangeVariant(event.target.value)
                   }
                 />
                 {variant_option}
