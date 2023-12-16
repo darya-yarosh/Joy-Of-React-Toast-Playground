@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import useKey from '../../hooks/useEscapeKey';
 
@@ -39,7 +39,7 @@ function ToastProvider({ children }) {
     setMessage: setCurrentMessage,
     variant: currentVariant,
     setVariant: setCurrentVariant,
-    createToast: () => createToast()
+    createToast: () => createToast(),
   }
 
   const toastListProviderValue = {

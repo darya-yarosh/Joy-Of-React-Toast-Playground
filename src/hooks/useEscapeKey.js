@@ -1,25 +1,23 @@
 import { useEffect } from 'react';
 
-function useEscapeKey(
+function useKey(
     key,
     callback
 ) {
+    const keyDownFunction = (event) => {
+        if (event.code === key) {
+            callback()
+        }
+    }
+
     useEffect(() => {
-        document.addEventListener("keydown", (event) => {
-            if (event.code === key) {
-                callback()
-            }
-        });
+        document.addEventListener("keydown", keyDownFunction);
 
         return (() => {
-            document.removeEventListener("keydown", (event) => {
-                if (event.code === key) {
-                    callback()
-                }
-            })
+            document.removeEventListener("keydown", keyDownFunction);
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 }
 
-export default useEscapeKey;
+export default useKey;
