@@ -2,26 +2,21 @@ import React, { useState } from 'react';
 
 import useKeyDown from '../../hooks/useKeyDown';
 
-export const CurrentToastContext = React.createContext();
 export const ToastListContext = React.createContext();
 
 export const VARIANT_OPTIONS = ['notice', 'warning', 'success', 'error'];
 
 function ToastProvider({ children }) {
-  const [currentMessage, setCurrentMessage] = useState("");
-  const [currentVariant, setCurrentVariant] = useState(VARIANT_OPTIONS[0]);
   const [toastList, setToastList] = useState([]);
 
-  function createToast() {
+  function createToast(message, variant) {
     const newToast = {
       id: crypto.randomUUID(),
-      message: currentMessage,
-      variant: currentVariant,
+      message: message,
+      variant: variant,
     }
 
     setToastList([...toastList, newToast]);
-    setCurrentVariant(VARIANT_OPTIONS[0]);
-    setCurrentMessage("");
   }
 
   function closeToast(toastId) {
@@ -34,16 +29,9 @@ function ToastProvider({ children }) {
     setToastList([]);
   }
 
-  const currentToastProviderValue = {
-    message: currentMessage,
-    setMessage: setCurrentMessage,
-    variant: currentVariant,
-    setVariant: setCurrentVariant,
-    createToast: () => createToast(),
-  }
-
   const toastListProviderValue = {
     toastList: toastList,
+    createToast: (message, variant) => createToast(message, variant),
     closeToast: (toastId) => closeToast(toastId),
     closeToastList: () => closeToastList()
   }
@@ -51,11 +39,9 @@ function ToastProvider({ children }) {
   useKeyDown("Escape", () => closeToastList());
 
   return (
-    <CurrentToastContext.Provider value={currentToastProviderValue}>
-      <ToastListContext.Provider value={toastListProviderValue}>
-        {children}
-      </ToastListContext.Provider>
-    </CurrentToastContext.Provider>
+    <ToastListContext.Provider value={toastListProviderValue}>
+      {children}
+    </ToastListContext.Provider>
   )
 }
 

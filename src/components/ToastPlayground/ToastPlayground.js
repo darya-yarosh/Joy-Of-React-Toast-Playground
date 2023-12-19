@@ -1,30 +1,36 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import Button from '../Button';
 import ToastShelf from '../ToastShelf/ToastShelf';
 
 import styles from './ToastPlayground.module.css';
 
-import { CurrentToastContext, VARIANT_OPTIONS } from '../ToastProvider/ToastProvider';
+import { ToastListContext, VARIANT_OPTIONS } from '../ToastProvider/ToastProvider';
 
 function ToastPlayground() {
-  const currentToastContext = useContext(CurrentToastContext);
+  const toastListContext = useContext(ToastListContext);
+
+  const [currentMessage, setCurrentMessage] = useState("");
+  const [currentVariant, setCurrentVariant] = useState(VARIANT_OPTIONS[0]);
 
   const messageRef = useRef(null);
 
   function sendToast(event) {
     event.preventDefault();
-    currentToastContext.createToast();
+
+    toastListContext.createToast(currentMessage, currentVariant);
+    setCurrentVariant(VARIANT_OPTIONS[0]);
+    setCurrentMessage("");
 
     messageRef.current.focus();
   }
 
   function onChangeMessage(newMessage) {
-    currentToastContext.setMessage(newMessage);
+    setCurrentMessage(newMessage);
   }
 
   function onChangeVariant(newVariant) {
-    currentToastContext.setVariant(newVariant);
+    setCurrentVariant(newVariant);
   }
 
   useEffect(() => {
@@ -32,10 +38,6 @@ function ToastPlayground() {
       messageRef.current.focus();
     }
   }, [])
-
-  if (currentToastContext === undefined) {
-    return <div>Loading...</div>
-  }
 
   return (
     <div className={styles.wrapper}>
@@ -63,7 +65,7 @@ function ToastPlayground() {
               id="message"
               ref={messageRef}
               className={styles.messageInput}
-              value={currentToastContext.message}
+              value={currentMessage}
               onChange={(event) => onChangeMessage(event.target.value)}
             />
           </div>
@@ -84,7 +86,7 @@ function ToastPlayground() {
                   type="radio"
                   name="variant"
                   value={variant_option}
-                  checked={variant_option === currentToastContext.variant}
+                  checked={variant_option === currentVariant}
                   onChange={
                     (event) =>
                       onChangeVariant(event.target.value)
