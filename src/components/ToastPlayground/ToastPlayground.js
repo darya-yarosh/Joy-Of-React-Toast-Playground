@@ -18,6 +18,16 @@ function ToastPlayground() {
   function sendToast(event) {
     event.preventDefault();
 
+    if (currentMessage.trim().length === 0) {
+      window.alert(
+        `Error:
+        \nThe message must contain at least one non-whitespace character.
+        \nPlease enter something in the "Message" field.`
+      )
+      
+      return;
+    }
+
     toastListContext.createToast(currentMessage, currentVariant);
     setCurrentVariant(VARIANT_OPTIONS[0]);
     setCurrentMessage("");
@@ -66,6 +76,7 @@ function ToastPlayground() {
               ref={messageRef}
               className={styles.messageInput}
               value={currentMessage}
+              required
               onChange={(event) => onChangeMessage(event.target.value)}
             />
           </div>
