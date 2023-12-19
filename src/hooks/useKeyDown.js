@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-function useKey(
+function useKeyDown(
     key,
     callback
 ) {
@@ -11,13 +11,13 @@ function useKey(
     }
 
     useEffect(() => {
-        document.addEventListener("keydown", keyDownFunction);
+        window.addEventListener("keydown", keyDownFunction);
 
         return (() => {
-            document.removeEventListener("keydown", keyDownFunction);
+            window.removeEventListener("keydown", keyDownFunction);
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 }
 
-export default useKey;
+export default useKeyDown;

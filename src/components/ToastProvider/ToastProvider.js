@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
-import useKey from '../../hooks/useEscapeKey';
+import useKeyDown from '../../hooks/useKeyDown';
 
 export const CurrentToastContext = React.createContext();
 export const ToastListContext = React.createContext();
@@ -48,7 +48,7 @@ function ToastProvider({ children }) {
     closeToastList: () => closeToastList()
   }
 
-  useKey("Escape", () => closeToastList());
+  useKeyDown("Escape", () => closeToastList());
 
   return (
     <CurrentToastContext.Provider value={currentToastProviderValue}>
